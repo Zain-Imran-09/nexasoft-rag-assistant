@@ -1,2 +1,6 @@
-packaging==26.3
+﻿# Packages used directly by the current project code.
+langchain-community==0.4.2
+langchain-core==1.6.10
+pypdf==6.20.1
 python-dotenv==1.2.4
+reportlab==5.0.1
