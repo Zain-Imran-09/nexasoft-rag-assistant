@@ -87,3 +87,47 @@ python -m scripts.test_loader_errors
 - No document chunking.
 - No embeddings or vector indexing.
 - No LLM-powered question answering yet.
+
+
+## Document Chunking
+
+The NexaSoft RAG Assistant uses LangChain's
+RecursiveCharacterTextSplitter to split loaded
+documents into smaller units for retrieval.
+
+### Initial Configuration
+
+- Chunk size: 1000 characters
+- Chunk overlap: 200 characters
+- Length function: len()
+- Metadata: Preserved from original documents
+
+### Experiments
+
+| Size | Overlap | Total Chunks | Short Chunks (<100) |
+|------|---------|--------------|---------------------|
+| 500  | 100     | 22           | 1                   |
+| 1000 | 200     | 12           | 0                   |
+| 1500 | 300     | 10           | 0                   |
+
+### Decision
+
+1000/200 was selected as the initial baseline
+because it produces manageable chunks while
+preserving meaningful document context.
+
+A 43-character standalone chunk was detected
+in pricing.md under the 500/100 configuration.
+
+This decision is preliminary and will be
+evaluated against retrieval quality later.
+
+### Validation
+
+Run automated tests:
+
+python -m pytest tests/test_chunker.py -v
+
+Run chunk inspection:
+
+python -m scripts.inspect_chunks
