@@ -229,3 +229,61 @@ langchain-text-splitters==1.1.3
 The inspection script connects loading, chunking, and embedding for verification. It keeps text, metadata, and vectors paired in memory.
 
 Vector database storage, production ingestion integration, retrieval, and answer generation will be implemented in later stages.
+
+## Day 7 — Qdrant Vector Database
+
+Connected the NexaSoft RAG Assistant's embedding pipeline to Qdrant Cloud and indexed the company knowledge base.
+
+### Collection Configuration
+
+| Setting | Value |
+|---|---|
+| Database | Qdrant Cloud |
+| Collection | `nexasoft_knowledge_base` |
+| Vector dimensions | 384 |
+| Distance metric | Cosine |
+| Embedding model | `sentence-transformers/all-MiniLM-L6-v2` |
+| Chunk size | 1,000 characters |
+| Chunk overlap | 200 characters |
+
+### Indexing Results
+
+| Check | Result |
+|---|---|
+| Source documents loaded | 10 |
+| Chunks generated | 12 |
+| Points uploaded | 12 |
+| Uploaded records verified | 12 |
+| Total collection points | 12 |
+| Qdrant connection | Passed |
+| Collection configuration check | Passed |
+| Payload verification in indexing script | Passed |
+
+### Stored Point Payload
+
+Each indexed point stores the text chunk and its associated information so the application can identify where retrieved content came from.
+
+Expected payload fields:
+
+- `text` — the text content of the chunk.
+- `metadata` — document metadata, including `source` and `filename`.
+- `chunk_index` — the chunk's index.
+- `embedding_model` — the model used to generate the embedding.
+
+### Verification Commands
+
+Run these commands from the project root:
+
+```powershell
+conda activate nexasoft-rag
+python -m scripts.check_qdrant
+python -m scripts.index_documents
+```
+
+The indexing script successfully uploaded and verified 12 records. The Qdrant connection and collection configuration checks also passed.
+
+### Current Scope
+
+The knowledge base is now indexed in Qdrant Cloud. Document loading, chunking, embedding generation, and vector storage have been implemented and tested individually through the project's verification scripts.
+
+Semantic retrieval and answer generation are not yet part of this completed stage.
