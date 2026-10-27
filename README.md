@@ -287,3 +287,33 @@ The indexing script successfully uploaded and verified 12 records. The Qdrant co
 The knowledge base is now indexed in Qdrant Cloud. Document loading, chunking, embedding generation, and vector storage have been implemented and tested individually through the project's verification scripts.
 
 Semantic retrieval and answer generation are not yet part of this completed stage.
+
+
+## Day 8 — Semantic Retriever
+
+### Objective
+Retrieve the most relevant knowledge-base chunks for a user's question using semantic similarity.
+
+### Implementation
+- `app/rag/retriever.py` — connects to Qdrant Cloud, embeds the query, retrieves ranked chunks, and returns their text, similarity score, source, filename, chunk index, and metadata.
+- `scripts/test_retriever.py` — tests retrieval quality using five questions and validates input errors.
+
+### Retrieval Workflow
+1. Receive a user's question.
+2. Convert the question into an embedding using `sentence-transformers/all-MiniLM-L6-v2`.
+3. Search the `nexasoft_knowledge_base` collection using Qdrant's `query_points()`.
+4. Return the top-k matching chunks with scores and source metadata.
+
+### Verification
+- Confirmed connection to Qdrant Cloud.
+- Tested website pricing, custom RAG pricing, payment milestones, company hours, and student discounts.
+- Verified that blank questions and invalid `top_k` values raise `ValueError`.
+- Inspected retrieved text to assess relevance and source accuracy.
+
+### Known Limitations
+- The highest similarity score does not guarantee that a chunk contains the exact answer.
+- Qdrant can return results even when the knowledge base does not contain an answer.
+- Answer generation and unsupported-question handling are not implemented in this stage.
+
+### Day 8 Outcome
+The semantic retriever is implemented and its basic retrieval and input-validation behavior has been tested. Git commit and push remain to be verified.
