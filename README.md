@@ -317,3 +317,79 @@ Retrieve the most relevant knowledge-base chunks for a user's question using sem
 
 ### Day 8 Outcome
 The semantic retriever is implemented and its basic retrieval and input-validation behavior has been tested. Git commit and push remain to be verified.
+
+## Day 9 — Grounded Answer Generation
+
+### Objective
+
+Generate answers using retrieved knowledge-base context, while acknowledging when the available context does not answer a question.
+
+### Implementation
+
+| File | Purpose |
+|---|---|
+| `app/rag/generator.py` | Formats retrieved context and generates answers using the Groq API |
+| `scripts/test_groq_connection.py` | Verifies that the Groq API connection works |
+| `scripts/test_generator.py` | Tests generator behavior with mocked Groq responses |
+| `scripts/ask_question.py` | Connects the semantic retriever to the answer generator |
+
+### Architecture
+
+1. Receive a user's question.
+2. Generate a query embedding and retrieve the top three chunks from Qdrant using `retrieve_chunks()`.
+3. Format the retrieved text with source labels and metadata.
+4. Send the question and context to Groq for answer generation.
+5. Return the generated answer with source references where supported.
+
+### Model and Configuration
+
+- **Provider:** Groq API
+- **Model:** `openai/gpt-oss-20b` (configurable through `GROQ_MODEL`)
+- **Python SDK:** `groq`
+- **Secret configuration:** `GROQ_API_KEY` stored in the local `.env` file
+- **Default retrieval count:** 3 chunks
+
+Keep `.env` out of Git. Never commit API keys or print them in logs.
+
+### Grounding and Uncertainty Handling
+
+- The system instructs the model to answer using the supplied context.
+- The prompt treats retrieved content as reference data rather than instructions.
+- Source labels such as `[Source 1]` help identify supporting context.
+- Empty or unusable context returns: `I don't know based on the available knowledge base.`
+- Blank questions and invalid chunk inputs are rejected.
+
+Prompt instructions reduce unsupported answers but cannot guarantee that the model will always refuse to guess. The retriever can still return semantically similar chunks that do not contain the answer.
+
+### Verification
+
+Run the following commands from the project root:
+
+```powershell
+conda activate nexasoft-rag
+python -m scripts.test_groq_connection
+python -m unittest discover -s tests -p "test_generator.py" -v
+python -m scripts.ask_question
+```
+
+### Results
+
+- Groq API connection: Passed.
+- Generator unit tests: 5 passed.
+- Supported pricing question: Answer generation verified.
+- Unsupported medical-insurance question: The assistant acknowledged that the information was unavailable.
+- Empty-context behavior: Returns the expected fallback without calling Groq.
+
+Unit tests use mocked API responses, avoiding live API calls during those tests. The connection and end-to-end scripts use the live services.
+
+### Current Limitations
+
+- No FastAPI endpoint or frontend integration yet.
+- No similarity-score threshold to reject weak retrieval matches.
+- Prompt-based grounding is not a guarantee against hallucination.
+- Source labels are based on the retrieved context supplied to the model.
+- No automated evaluation across a larger set of supported and unsupported questions.
+
+### Day 9 Outcome
+
+The Groq-backed answer generator is connected to the existing semantic retriever. The initial end-to-end workflow and five generator unit tests have been verified.
