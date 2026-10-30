@@ -393,3 +393,21 @@ Unit tests use mocked API responses, avoiding live API calls during those tests.
 ### Day 9 Outcome
 
 The Groq-backed answer generator is connected to the existing semantic retriever. The initial end-to-end workflow and five generator unit tests have been verified.
+
+## Day 10 — Source Citations and Retrieval Debugging
+
+Retrieved chunks include the source filename, source path, PDF page when available, chunk index, similarity score, and full metadata. The question script prints filenames and page citations with the answer. Add `--debug` to inspect each retrieved chunk's text and metadata before answer generation:
+
+```powershell
+python -m scripts.ask_question --debug
+```
+
+The debug option shows the retrieved evidence used to build the answer. Similarity scores indicate closeness in embedding space; they are not confidence percentages.
+
+### Verification
+
+Run the offline unit tests without calling Qdrant or Groq:
+
+```powershell
+python -m unittest discover -s tests -p "test_*.py" -v
+```

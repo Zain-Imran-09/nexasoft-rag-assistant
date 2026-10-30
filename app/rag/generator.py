@@ -27,11 +27,15 @@ def format_context(retrieved_chunks: list[dict]) -> str:
             continue
 
         filename = chunk.get("filename", "Unknown")
+        page = chunk.get("page")
+        source = chunk.get("source", "Unknown")
         chunk_index = chunk.get("chunk_index", "Unknown")
+        page_label = f"\nPage: {page}" if page is not None else ""
 
         context_parts.append(
             f"[Source {index}]\n"
             f"Filename: {filename}\n"
+            f"Source: {source}{page_label}\n"
             f"Chunk index: {chunk_index}\n"
             f"Content:\n{text}"
         )

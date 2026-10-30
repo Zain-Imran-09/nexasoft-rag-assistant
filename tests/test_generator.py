@@ -19,6 +19,7 @@ class TestGenerator(unittest.TestCase):
                 "text": "Website development starts at PKR 50,000.",
                 "filename": "pricing.md",
                 "source": "pricing.md",
+                "page": 2,
                 "chunk_index": 0,
                 "score": 0.84,
             }
@@ -30,6 +31,9 @@ class TestGenerator(unittest.TestCase):
         self.assertIn("pricing.md", context)
         self.assertIn("PKR 50,000", context)
         self.assertIn("[Source 1]", context)
+        self.assertIn("Filename: pricing.md", context)
+        self.assertIn("Source: pricing.md", context)
+        self.assertIn("Page: 2", context)
 
     def test_empty_context_returns_unknown_without_api_call(self):
         with patch("app.rag.generator.Groq") as mock_groq:

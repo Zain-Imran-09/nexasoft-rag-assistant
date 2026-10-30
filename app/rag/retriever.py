@@ -65,6 +65,7 @@ def retrieve_chunks(question: str, top_k: int = 3) -> list[dict]:
                     "score": point.score,
                     "source": metadata.get("source", "Unknown"),
                     "filename": metadata.get("filename", "Unknown"),
+                    "page": metadata.get("page"),
                     "chunk_index": payload.get("chunk_index"),
                     "metadata": metadata,
                 }
